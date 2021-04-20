@@ -1,1 +1,49 @@
-# docker-compose script goes here.
+version: "3"
+volumes:
+  static-data:
+services:
+  mongo:
+    container_name: mongo
+    image: mongo:latest
+    logging:
+      options:
+        max-size: "64m"
+        max-file: "4"
+    ports:
+      - "127.0.0.1:27017:27017"
+    volumes:
+      - "./.mongo_data:/data/db"
+  init:
+    container_name: init
+    build: init
+    command:
+      - python
+      - main.py
+    depends_on:
+      - mongo
+    volumes:
+      - "./data:/data"
+  api:
+    container_name: api
+    hostname: api
+    build: api
+    command:
+      - uvicorn
+      - main:app
+      - "--host"
+      - "0.0.0.0"
+      - "--port"
+      - "80"
+    depends_on:
+      - init
+  nginx:
+    container_name: nginx
+    hostname: nginx
+    image: nginx:latest
+    depends_on:
+      - api
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./conf/nginx/default.conf:/etc/nginx/conf.d/default.conf
+      - "static-data:/static"
