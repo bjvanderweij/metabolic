@@ -55,25 +55,28 @@ class Entry(MongoObjectType):
     product_name = graphene.NonNull(graphene.String)
     unit = graphene.NonNull(Unit)
     geography = graphene.Field(Geography)
+    impact = graphene.Field('schema.Impact', indicator_id=graphene.String())
 
     async def resolve_geography(parent, info):
         db = util.get_mongo_client()
-        print(parent)
         return await db.rivm2016.geography.find_one(
             {
                 '_id': parent['geography_id']
             })
 
+    async def resolve_impact(parent, info, indicator_id):
+        db = util.get_mongo_client()
+        return await db.rivm2016.impact.find_one(
+            {
+                'entry_id': ObjectId(parent['_id']),
+                'indicator_id': ObjectId(indicator_id),
+            })
+
 
 class Impact(MongoObjectType):
-    # indicator = graphene.Field(Indicator, indicator_id=graphene.ID())
     indicator = graphene.Field(Indicator)
     entry = graphene.Field(Entry)
     coefficient = graphene.NonNull(graphene.Float)
-
-    # async def resolve_indicator(parent, info, id):
-    #     db = util.get_mongo_client()
-    #     return await db.rivm2016.indicator.find_one({'_id': id})
 
     async def resolve_indicator(parent, info):
         db = util.get_mongo_client()
