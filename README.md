@@ -10,7 +10,15 @@ docker-compose up -d
 
 from the top-level directory containing the `docker-compose.yaml` file and navigate to [`http://localhost:8080`](http://localhost:8080) to access the API and GraphiQL interface.
 
-The docker-compose command will
+To stop the server, execute
+
+```bash
+docker-compose down
+```
+
+## Overview of services
+
+When starting 
 
 * start a MongoDB instance
 * load the `init` service, which loads initialization data from `data/rivm2016.csv` into MongoDB (if it has not been loaded before)
@@ -23,9 +31,16 @@ If the database has already been initialized, this step will be skipped.
 The database can be re-initialized manually by setting the `--force` flag on the script run by `init`.
 This will empty the database and re-load the data.
 
-You can also run the initialization script manually, provided that the MongoDB container is running:
+## Running services outside of the docker environment
+
+You can also run the API and initialization script outside of the docker environment, provided that the MongoDB container is running.
+
+The commands below will respectively run the initialization script and API server.
 
 ```bash
-cd init/src
 PYTHONPATH=mblib/src MONGODB_HOST=localhost DATA_PATH="data/rivm2016.csv" python init/src/main.py
+```
+
+```bash
+PYTHONPATH=mblib/src:api/src MONGODB_HOST=localhost uvicorn main:app --reload
 ```
