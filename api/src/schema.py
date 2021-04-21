@@ -47,9 +47,14 @@ class Geography(MongoObjectType):
 class Indicator(MongoObjectType):
     method = graphene.NonNull(graphene.String)
     category = graphene.NonNull(graphene.String)
-    name = graphene.NonNull(graphene.String)
+    indicator = graphene.NonNull(graphene.String)
     unit = graphene.NonNull(Unit)
 
+    async def resolve_indicator(parent, info):
+        # I preferred indicator.name to indicator.indicator, but to
+        # conform to the gql schema, I'm adding the indicator field 
+        # here
+        return parent['name']
 
 class Entry(MongoObjectType):
     product_name = graphene.NonNull(graphene.String)
