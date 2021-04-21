@@ -16,6 +16,7 @@ services:
   init:
     container_name: init
     build: init
+    env_file: "conf/conf.env"
     command:
       - python
       - main.py
@@ -23,10 +24,12 @@ services:
       - mongo
     volumes:
       - "./data:/data"
+      - "./mblib:/mblib"
   api:
     container_name: api
     hostname: api
     build: api
+    env_file: "conf/conf.env"
     command:
       - uvicorn
       - main:app
@@ -35,7 +38,9 @@ services:
       - "--port"
       - "80"
     depends_on:
-      - init
+      - mongo
+    volumes:
+      - "./mblib:/mblib"
   nginx:
     container_name: nginx
     hostname: nginx

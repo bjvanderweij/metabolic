@@ -11,12 +11,11 @@ import typer
 from bson.objectid import ObjectId  # type: ignore
 
 import util
+import settings
 
 logging.basicConfig()
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
-
-DATA_PATH = '/data/rivm2016.csv'  # configuration var
 
 
 @contextmanager
@@ -116,8 +115,13 @@ async def insert_entries_and_impacts(
 COLLECTIONS = ['entry', 'indicator', 'geography', 'impact']
 
 
-async def load_data(data_path: str, force: bool = False):
-    db = util.get_mongo_client()
+async def load_data(
+        data_path,
+        force,
+        mongodb_host,
+        mongodb_port,
+        ) -> None:
+    db = util.get_mongo_client(host=mongodb_host, port=mongodb_port)
     if await db.main.initialized.find_one() is None or force:
         logger.info('initializing database')
         for collection in COLLECTIONS:
@@ -142,9 +146,23 @@ async def load_data(data_path: str, force: bool = False):
         logger.info('skipping initialization (database already initialized)')
 
 
+def main(
+        data_path: str = settings.DATA_PATH,
+        force: bool = False,
+        mongodb_host: str = settings.MONGODB_HOST,
+        mongodb_port: int = settings.MONGODB_PORT
+        ) -> None:
+    """Initialize the database.
 
-def main(data_path: str = DATA_PATH, force: bool = False) -> None:
-    asyncio.run(load_data(data_path, force))
+    If the database has not been initialized, existing data will be
+    deleted and new data inserted.
+
+    Keyword arguments:
+    data_path -- path to CSV data
+    force -- if True, the script will run independent of whether the
+        database has already been initialized (default: False)
+    """
+    asyncio.run(load_data(data_path, force, mongodb_host, mongodb_port))
 
 
 if __name__ == '__main__':
