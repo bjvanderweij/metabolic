@@ -103,7 +103,6 @@ class Query(graphene.ObjectType):
             entry_id=graphene.ID(),
             indicator_id=graphene.ID()
         )
-    impacts = graphene.List(Impact)
 
     async def resolve_indicators(parent, info):
         db = util.get_mongo_client()
@@ -134,7 +133,3 @@ class Query(graphene.ObjectType):
                 'entry_id': ObjectId(entry_id),
                 'indicator_id': ObjectId(indicator_id),
             })
-
-    async def resolve_impacts(parent, info):
-        db = util.get_mongo_client()
-        return await db.rivm2016.impact.find().to_list(None)
