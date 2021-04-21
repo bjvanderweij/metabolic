@@ -143,7 +143,7 @@ async def load_data(
                 )
             # Insert an arbitrary bit of information to mark
             # initialization as done
-            await db.main.initialized.insert_one({'done': True})
+            await db.main.initialized.update_one({'done': True}, upsert=True)
         except Exception as exc:
             raise type(exc)(
                     f'encountered {str(exc)} while initializing database'
