@@ -10,6 +10,21 @@ docker-compose up -d
 
 from the top-level directory containing the `docker-compose.yaml` file and navigate to [`http://localhost:8080`](http://localhost:8080) to access the API and GraphiQL interface.
 
+Try, for instance, to evaluate the following query:
+
+```
+{
+  entries {
+    id
+    productName
+  }
+  indicators {
+    id
+    name
+  }
+}
+```
+
 To stop the server, execute
 
 ```bash
