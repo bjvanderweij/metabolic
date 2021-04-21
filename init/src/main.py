@@ -27,6 +27,9 @@ def csv_data_reader(path: str):
 async def insert_indicators(path: str) -> T.List[ObjectId]:
     """Read the first two rows of the data at path and construct
     and insert indicator data.
+
+    Return a list of MongoDB IDs corresponding to indicators in
+    the order in which they appear in the header.
     """
     db = util.get_mongo_client()
     indicator_ids = []
@@ -52,7 +55,10 @@ async def insert_indicators(path: str) -> T.List[ObjectId]:
 
 
 async def insert_geographies() -> T.Dict[str, ObjectId]:
-    """Placeholder function for geography data loader."""
+    """Placeholder function for loading geography data.
+
+    Return a dictionary mapping geography short names to
+    MongoDB IDs."""
     geographies = [
             {
                 'short_name': 'NL',
