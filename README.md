@@ -1,6 +1,6 @@
 # Running this app
 
-Prerequisites: docker and docker-compose.
+Running this app requires having docker and docker-compose installed.
 
 To run the server, execute 
 
